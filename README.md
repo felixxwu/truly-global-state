@@ -35,11 +35,19 @@ Initialise the store in your top-level component, so that all of its children ca
 // App.tsx
 
 import { store } from "./store"
+import { Buttons } from "./Buttons.tsx"
+import { DisplayCount } from "./DisplayCount.tsx"
 
 export function App() {
     store.init()
 
-    ...
+    // child components don't need to be passed the store
+    return (
+        <>
+            <Buttons />
+            <DisplayCount />
+        </>
+    )
 }
 
 ```
@@ -59,7 +67,6 @@ export function Buttons() {
             <button onClick={() => store.state.count += 1}>
                 increment
             </button>
-            <br />
             <button onClick={() => store.state.double()}>
                 double
             </button>
