@@ -7,8 +7,13 @@ export function defineStore<Config, K extends (keyof Config)[]>(config: Config) 
     return {
         init() {
             for (const key of <K>Object.keys(config)) {
-                const [value, setValue] = useState(config[key])
-                proxyObj[key] = { get: value, set: setValue }
+                const initValue = config[key]
+                if (typeof initValue === 'function') {
+                    proxyObj[key] = { get: initValue, set: () => {} }
+                } else {
+                    const [value, setValue] = useState(initValue)
+                    proxyObj[key] = { get: value, set: setValue }
+                }
             }
         },
         state: new Proxy<{[key in K[number]]: Config[key]}>(config, {
