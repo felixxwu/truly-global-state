@@ -8,7 +8,7 @@ npm install truly-global-state # or yarn add truly-global-state
 
 ## Define your store
 
-Configure your store using a simple object, this will also serve as the type definition for your store. Actions are just functions in the object where you can use `this` to modify the state. (Just don't use [arrow function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) or your function will not have access to the correct `this`)
+Configure your store using a simple object, with initial values for all keys. Actions can also be defined, these are just functions in the object where you can use `this` to modify the state. If you are using [arrow function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) you will have to use `store.state` instead, as your function will not have access to the correct `this`
 
 ```jsx
 // store.ts
@@ -19,6 +19,10 @@ export const store = defineStore({
     count: 0,
     double() {
         this.count *= 2
+    },
+    // or with arrow function expressions:
+    double: () => {
+        store.state.count *= 2
     }
 })
 ```
