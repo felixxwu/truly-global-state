@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixxwu/MinimalReactState.git"
+    "url": "git+https://github.com/felixxwu/truly-global-state.git"
   },
   "keywords": [
     "state",
@@ -27,9 +27,9 @@
   "author": "Felix Wu",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/felixxwu/MinimalReactState/issues"
+    "url": "https://github.com/felixxwu/truly-global-state/issues"
   },
-  "homepage": "https://github.com/felixxwu/MinimalReactState#readme",
+  "homepage": "https://github.com/felixxwu/truly-global-state#readme",
   "devDependencies": {
     "@types/react": "^18.0.6",
     "tslint": "^6.1.3",
