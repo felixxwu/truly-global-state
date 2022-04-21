@@ -1,0 +1,42 @@
+{
+  "name": "truly-global-state",
+  "version": "1.0.0",
+  "description": "A truly global state management library for React",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "dependencies": {
+    "react": "^18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felixxwu/MinimalReactState.git"
+  },
+  "keywords": [
+    "state",
+    "management",
+    "react",
+    "global",
+    "quick",
+    "easy"
+  ],
+  "author": "Felix Wu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/felixxwu/MinimalReactState/issues"
+  },
+  "homepage": "https://github.com/felixxwu/MinimalReactState#readme",
+  "devDependencies": {
+    "@types/react": "^18.0.6",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.6.2"
+  },
+  "files": [
+    "lib/**/*"
+  ]
+}
