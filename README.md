@@ -105,8 +105,41 @@ export function increaseBy5() {
 
 ## Fully type safe
 
-Typescript will shout at you if you mispell one of the store keys.
+Typescript will give you correct type annotations for all store values, or shout at you if you mispell one of the store keys.
+
+```jsx
+const count = store.state.count // count: number
+```
+
 ```jsx
 // Property 'cont' does not exist on type '{ count: number; double: () => void; }'. Did you mean 'count'?
 const count = store.state.cont
+```
+
+## Reactivity for deeply nested state and arrays
+
+Updates to the children of store values are automatically detected.
+
+```jsx
+// store.ts
+
+export const store = defineStore({
+    array1: [1, 2, 3],
+    array2: [[5, 6], [7, 8]],
+    deeply: {
+        nested: {
+            object: 'change me!'
+        }
+    },
+})
+```
+
+```jsx
+// udpateComplexValues.ts
+
+export function udpateComplexValues() {
+    store.state.array1.push(4)
+    store.state.array2[0][0] = 10
+    store.state.deeply.nested.object = 'changed!'
+}
 ```
