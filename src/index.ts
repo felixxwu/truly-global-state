@@ -1,6 +1,7 @@
 import {useState} from "react"
 
 const proxyObject = {} as any
+const subscribers = {} as any
 const storeNotInitialised = 'Store was not initialised before use! Make sure to call store.init() in your top-level component.'
 
 function constructNewObject(target: any, key: any, value: any) {
@@ -38,18 +39,34 @@ function reactiveObject<T>(object: T, setter: (object: T) => void): T {
     }
 }
 
-export function defineStore<Config, K extends (keyof Config)[]>(config: Config) {
-    return {
-        init() {
-            for (const key of <K>Object.keys(config)) {
-                const initValue = config[key]
-                if (typeof initValue === 'function') {
-                    proxyObject[key] = { get: initValue, set: () => {} }
-                } else {
-                    const [value, setValue] = useState(initValue)
-                    proxyObject[key] = { get: value, set: setValue }
+export function createStore<Config, K extends (keyof Config)[]>(config: Config) {
+    for (const key of <K>Object.keys(config)) {
+        const initValue = config[key]
+        subscribers[key] = []
+        if (typeof initValue === 'function') {
+            proxyObject[key] = { get: initValue, set: () => {} }
+        } else {
+            const setValue = (v: Config[keyof Config]) => {
+                proxyObject[key].get = v
+                for (const updateFunction of subscribers[key]) {
+                    updateFunction((count: number) => count + 1)
                 }
             }
+            proxyObject[key] = { get: initValue, set: setValue }
+        }
+    }
+    
+    return {
+        subscribeTo(keys: K) {
+            for (const key of keys) {
+                const [_, setCount] = useState(0)
+                if (!subscribers[key].includes(setCount)) {
+                    subscribers[key].push(setCount)
+                }
+            }
+        },
+        subscribeToAll() {
+            this.subscribeTo(<K>Object.keys(config))
         },
         state: new Proxy<{[key in K[number]]: Config[key]}>(config, {
             get(_, key: string) {

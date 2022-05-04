@@ -1,35 +1,54 @@
 # Truly Global State for React
 
-A global state management library for React with almost no boilerplate code and access to state from anywhere.
+A pub/sub-based global state management library for React with almost no boilerplate code and access to state from anywhere.
 
 ```bash
 npm install truly-global-state # or yarn add truly-global-state
 ```
 
-## Define your store
+## Create the store
 
-Configure your store using a simple object, with initial values for all keys. Actions can also be defined, these are just functions in the object where you can use `this` to modify the state. If you are using [arrow function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) you will have to use `store.state` instead, as your function will not have access to the correct `this`
+Configure your store using a simple object, with initial values for all store keys. Actions can also be defined, these are just functions in the object where you can use `this` to modify the state. If you are using [arrow function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) you will have to use `store.state` instead, as your function will not have access to the correct `this`
 
 ```jsx
 // store.ts
 
-import { defineStore } from "truly-global-state"
+import { createStore } from "truly-global-state"
 
-export const store = defineStore({
+export const store = createStore({
     count: 0,
+    // actions are just normal functions
     double() {
         this.count *= 2
     },
     // or with arrow function expressions:
-    double: () => {
-        store.state.count *= 2
+    triple: () => {
+        store.state.count *= 3
     }
 })
 ```
 
-## Initialise the store
+## Use in your React components
 
-Initialise the store in your top-level component, so that all of its children can update when the store changes.
+Components that read from the store will need to subscribe to it. Every time the value changes, subscribed components will re-render themselves along with all their children. Use the `subscribeTo(keys: string[])` method to listen to changes for specific keys in the store, or use the `subscribeToAll()` method to update whenever anything changes.
+
+```jsx
+// DisplayCount.tsx
+
+import { store } from "./store"
+
+export function DisplayCount() {
+    store.subscribeTo(['count'])
+    
+    return (
+        <div>
+            Count: {store.state.count}
+        </div>
+    )
+}
+```
+
+A quick and dirty way to get started for small projects would be to use `subscribeToAll` on your root-level component, this way you won't have to worry about subscribing each component separately. However, beware that as your app grows this could cause performance issues, since everything re-renders every time anything is changed.
 
 ```jsx
 // App.tsx
@@ -39,9 +58,8 @@ import { Buttons } from "./Buttons.tsx"
 import { DisplayCount } from "./DisplayCount.tsx"
 
 export function App() {
-    store.init()
+    store.subscribeToAll()
 
-    // child components don't need to be passed the store
     return (
         <>
             <Buttons />
@@ -52,9 +70,11 @@ export function App() {
 
 ```
 
-## Use in your React components
+Components that write to the store don't need to be subscribed to it (unless they also read from it!), this means that the component will not be re-rendered when store values are changed.
 
-Simply import your store and start using it in your components, no need for hooks!
+To change a store value, just set it!
+
+To submit an action, just call it!
 
 ```jsx
 // Buttons.tsx
@@ -71,20 +91,6 @@ export function Buttons() {
                 double
             </button>
         </>
-    )
-}
-```
-
-```jsx
-// DisplayCount.tsx
-
-import { store } from "./store"
-
-export function DisplayCount() {
-    return (
-        <div>
-            Count: {store.state.count}
-        </div>
     )
 }
 ```
@@ -114,6 +120,13 @@ const count = store.state.count // count: number
 ```jsx
 // Property 'cont' does not exist on type '{ count: number; double: () => void; }'. Did you mean 'count'?
 const count = store.state.cont
+```
+
+When subscribing a component, typescript will also check your store keys.
+
+```jsx
+// Type '"cont"' is not assignable to type '"count" | "double"'. Did you mean '"count"'?
+store.subscribeTo(['cont'])
 ```
 
 ## Reactivity for deeply nested state and arrays
