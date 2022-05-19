@@ -1,6 +1,6 @@
 {
   "name": "truly-global-state",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A truly global state management library for React with pub/sub workflow",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

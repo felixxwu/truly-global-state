@@ -15,7 +15,7 @@ function constructNewObject(target: any, key: any, value: any) {
 }
 
 function reactiveObject<T>(object: T, setter: (object: T) => void): T {
-    if (typeof object === 'object') {
+    if (typeof object === 'object' && object !== null) {
         return new Proxy(object as any, {
             get(_, key) {
                 return reactiveObject(
