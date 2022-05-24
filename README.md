@@ -156,3 +156,58 @@ export function udpateComplexValues() {
     store.state.deeply.nested.object = 'changed!'
 }
 ```
+
+## Built-in localStorage support
+
+Specify an array of key names for all the store values you want to save into localStorage. When the user comes back in a new session, saved values will be restored.
+
+```jsx
+// store.ts
+
+import { createStore } from "truly-global-state"
+
+export const store = createStore(
+    {
+        count: 0,
+        double() {
+            this.count *= 2
+        },
+    },
+    {
+        // count will be saved in localStorage every time it is updated
+        localStorage: {
+            keys: ['count']
+            localStoragePrefix: 'prefix-', // optional: prepend a string to the localStorage key name, useful if there could be collisions with existing key names in your app
+        }
+    }
+)
+```
+
+## Built-in undo/redo support
+
+Specify an array of key names for all the store values you want to save into the history. Call `store.saveHistory()` whenever you want to add the current state to the history stack. Call `store.undo()` or `store.redo()` to undo/redo, and call `store.canUndo()` or `store.canRedo()` to give user feedback about the history.
+
+```jsx
+// store.ts
+
+import { createStore } from "truly-global-state"
+
+export const store = createStore(
+    {
+        count: 0,
+        double() {
+            this.count *= 2
+        },
+    },
+    {
+        localStorage: { keys: ['count'] }
+        // count will be added to the history whenever store.saveHistory() is called
+        undoRedo: {
+            keys: ['count'],
+            useLocalStorage: true, // optional (default = false): save the history stack to localStorage
+            localStorageKey: 'myHistory', // optional (default = 'history'): specify the localStorage key in case you are already using 'history' for something
+            maxLength: 10, // optional (default = unlimited): specify how many times the user can undo
+        }
+    }
+)
+```
